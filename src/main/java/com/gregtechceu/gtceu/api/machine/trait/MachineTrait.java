@@ -39,7 +39,7 @@ public abstract class MachineTrait implements ISyncManaged {
     public MachineTrait(MetaMachine machine) {
         this.machine = machine;
         this.capabilityValidator = side -> true;
-        machine.getTraitHolder().attachTrait(this);
+        machine.attachTrait(this);
     }
 
     public abstract MachineTraitType<?> getTraitType();
