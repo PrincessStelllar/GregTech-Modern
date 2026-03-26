@@ -54,7 +54,7 @@ public class ConverterTrait extends NotifiableEnergyContainer {
         this.feToEu = feToEu;
         setRenderState(getRenderState().setValue(GTMachineModelProperties.IS_FE_TO_EU, feToEu));
         syncDataHolder.markClientSyncFieldDirty("feToEu");
-        machine.notifyBlockUpdate();
+        getMachine().notifyBlockUpdate();
     }
 
     //////////////////////////////
@@ -69,6 +69,7 @@ public class ConverterTrait extends NotifiableEnergyContainer {
         if (feToEu) { // output eu
             super.serverTick();
         } else { // output fe
+            var machine = getMachine();
             var fontFacing = machine.getFrontFacing();
             var energyContainer = GTCapabilityHelper.getForgeEnergy(machine.getLevel(),
                     machine.getBlockPos().relative(fontFacing), fontFacing.getOpposite());

@@ -49,7 +49,7 @@ public class LocalizedHazardEmitterTrait extends MachineTrait {
 
         if (getLevel() instanceof ServerLevel serverLevel) {
             IHazardParticleContainer container = GTCapabilityHelper.getHazardContainer(serverLevel,
-                    getBlockPos().relative(machine.getFrontFacing()), machine.getFrontFacing().getOpposite());
+                    getBlockPos().relative(getMachine().getFrontFacing()), getMachine().getFrontFacing().getOpposite());
             if (container != null &&
                     container.getHazardCanBeInserted(getConditionToEmit()) > getConditionStrength()) {
                 container.addHazard(getConditionToEmit(), getConditionStrength());

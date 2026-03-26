@@ -55,6 +55,7 @@ public class NotifiableComputationContainer extends NotifiableRecipeHandlerTrait
     @Override
     public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         var latestTimeStamp = getMachine().getOffsetTimer();
+        var machine = getMachine();
         if (lastTimeStamp < latestTimeStamp) {
             lastOutputCwu = currentOutputCwu;
             currentOutputCwu = 0;
@@ -103,6 +104,8 @@ public class NotifiableComputationContainer extends NotifiableRecipeHandlerTrait
     @Override
     public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
+        var machine = getMachine();
+
         if (handlerIO == IO.IN) {
             if (isTransmitter()) {
                 // Ask the Multiblock controller, which *should* be an IOpticalComputationProvider
@@ -146,6 +149,7 @@ public class NotifiableComputationContainer extends NotifiableRecipeHandlerTrait
     @Override
     public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
+        var machine = getMachine();
         if (handlerIO == IO.IN) {
             if (isTransmitter()) {
                 // Ask the Multiblock controller, which *should* be an IOpticalComputationProvider
@@ -189,6 +193,7 @@ public class NotifiableComputationContainer extends NotifiableRecipeHandlerTrait
     @Override
     public List<Integer> handleRecipeInner(IO io, GTRecipe recipe, List<Integer> left,
                                            boolean simulate) {
+        var machine = getMachine();
         IOpticalComputationProvider provider = getOpticalNetProvider();
         if (provider == null) return left;
 
@@ -245,6 +250,7 @@ public class NotifiableComputationContainer extends NotifiableRecipeHandlerTrait
     @Nullable
     @Override
     public IOpticalComputationProvider getComputationProvider() {
+        var machine = getMachine();
         if (this.handlerIO.support(IO.OUT)) {
             return this;
         }
@@ -279,7 +285,7 @@ public class NotifiableComputationContainer extends NotifiableRecipeHandlerTrait
     @Nullable
     private IOpticalComputationProvider getOpticalNetProvider() {
         for (Direction direction : GTUtil.DIRECTIONS) {
-            BlockEntity blockEntity = machine.getLevel().getBlockEntity(machine.getBlockPos().relative(direction));
+            BlockEntity blockEntity = getLevel().getBlockEntity(getBlockPos().relative(direction));
             if (blockEntity instanceof OpticalPipeBlockEntity) {
                 return blockEntity.getCapability(GTCapability.CAPABILITY_COMPUTATION_PROVIDER, direction.getOpposite())
                         .orElse(null);

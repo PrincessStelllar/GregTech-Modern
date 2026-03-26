@@ -207,7 +207,7 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
     public void setFluidOutputDirection(@Nullable Direction outputFacing) {
         if (supportsAutoOutputFluids()) {
             if (!fluidOutputDirectionValidator.test(outputFacing) ||
-                    (machine.hasFrontFacing() && machine.getFrontFacing() == outputFacing))
+                    (getMachine().hasFrontFacing() && getMachine().getFrontFacing() == outputFacing))
                 return;
             this.fluidOutputDirection = outputFacing;
             syncDataHolder.markClientSyncFieldDirty("outputFacingFluids");
@@ -218,7 +218,7 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
     public void setItemOutputDirection(@Nullable Direction outputFacing) {
         if (supportsAutoOutputItems()) {
             if (!itemOutputDirectionValidator.test(outputFacing) ||
-                    (machine.hasFrontFacing() && machine.getFrontFacing() == outputFacing))
+                    (getMachine().hasFrontFacing() && getMachine().getFrontFacing() == outputFacing))
                 return;
             this.itemOutputDirection = outputFacing;
             syncDataHolder.markClientSyncFieldDirty("outputFacingItems");
@@ -230,7 +230,7 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
         if (!supportsAutoOutputItems()) return false;
 
         if (!isAutoOutputItems() || getItemOutputDirection() == null ||
-                !GTTransferUtils.hasAdjacentItemHandler(getLevel(), machine.getBlockPos(), getItemOutputDirection()))
+                !GTTransferUtils.hasAdjacentItemHandler(getLevel(), getMachine().getBlockPos(), getItemOutputDirection()))
             return false;
         return true;
     }
@@ -238,14 +238,14 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
     private boolean shouldKeepFluidSubscription() {
         if (!supportsAutoOutputFluids()) return false;
         if (!isAutoOutputFluids() || getFluidOutputDirection() == null ||
-                !GTTransferUtils.hasAdjacentFluidHandler(getLevel(), machine.getBlockPos(), getFluidOutputDirection()))
+                !GTTransferUtils.hasAdjacentFluidHandler(getLevel(), getMachine().getBlockPos(), getFluidOutputDirection()))
             return false;
         return true;
     }
 
     protected void updateItemOutputSubscription() {
         if (shouldKeepItemSubscription()) {
-            itemOutputSub = machine.subscribeServerTick(itemOutputSub, this::autoOutputItems);
+            itemOutputSub = getMachine().subscribeServerTick(itemOutputSub, this::autoOutputItems);
         } else if (itemOutputSub != null) {
             itemOutputSub.unsubscribe();
             itemOutputSub = null;
@@ -254,7 +254,7 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
 
     protected void updateFluidOutputSubscription() {
         if (shouldKeepFluidSubscription()) {
-            fluidOutputSub = machine.subscribeServerTick(fluidOutputSub, this::autoOutputFluids);
+            fluidOutputSub = getMachine().subscribeServerTick(fluidOutputSub, this::autoOutputFluids);
         } else if (fluidOutputSub != null) {
             fluidOutputSub.unsubscribe();
             fluidOutputSub = null;
@@ -262,14 +262,14 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
     }
 
     protected void autoOutputItems() {
-        if (machine.getOffsetTimer() % ticksPerCycle == 0 && getItemOutputDirection() != null) {
+        if (getMachine().getOffsetTimer() % ticksPerCycle == 0 && getItemOutputDirection() != null) {
             itemHandlers.forEach(this::exportItemToNearby);
         }
         updateItemOutputSubscription();
     }
 
     protected void autoOutputFluids() {
-        if (machine.getOffsetTimer() % ticksPerCycle == 0 && getFluidOutputDirection() != null) {
+        if (getMachine().getOffsetTimer() % ticksPerCycle == 0 && getFluidOutputDirection() != null) {
             fluidHandlers.forEach(this::exportFluidToNearby);
         }
         updateFluidOutputSubscription();
@@ -277,13 +277,13 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
 
     private void exportFluidToNearby(IFluidHandler handler) {
         var filter = getMachine().getFluidCapFilter(getFluidOutputDirection(), IO.OUT);
-        GTTransferUtils.getAdjacentFluidHandler(getLevel(), machine.getBlockPos(), getFluidOutputDirection())
+        GTTransferUtils.getAdjacentFluidHandler(getLevel(), getMachine().getBlockPos(), getFluidOutputDirection())
                 .ifPresent(adj -> GTTransferUtils.transferFluidsFiltered(handler, adj, filter));
     }
 
     private void exportItemToNearby(IItemHandler handler) {
         var filter = getMachine().getItemCapFilter(getItemOutputDirection(), IO.OUT);
-        GTTransferUtils.getAdjacentItemHandler(getLevel(), machine.getBlockPos(), getItemOutputDirection())
+        GTTransferUtils.getAdjacentItemHandler(getLevel(), getMachine().getBlockPos(), getItemOutputDirection())
                 .ifPresent(adj -> GTTransferUtils.transferItemsFiltered(handler, adj, filter));
     }
 
@@ -303,7 +303,7 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
                                                         Set<GTToolType> toolTypes, Direction side) {
         if (toolTypes.contains(GTToolType.WRENCH)) {
             if (!player.isShiftKeyDown()) {
-                if (!machine.hasFrontFacing() || side != machine.getFrontFacing()) {
+                if (!getMachine().hasFrontFacing() || side != getMachine().getFrontFacing()) {
                     var canSwitchItemOutputToSide = supportsAutoOutputItems() &&
                             itemOutputDirectionValidator.test(side) && side != getItemOutputDirection();
                     var canSwitchFluidOutputToSide = supportsAutoOutputFluids() &&
@@ -337,6 +337,7 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
     }
 
     private InteractionResult onWrenchClick(ExtendedUseOnContext context) {
+        var machine = getMachine();
         var player = context.getPlayer();
         var itemStack = context.getItemInHand();
         var gridSide = context.getGridSide();

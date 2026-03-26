@@ -78,7 +78,7 @@ public class EnvironmentalExplosionTrait extends MachineTrait {
 
     private void checkEnvironment() {
         if (!enableEnvironmentalExplosions || !explosionPredicate.getAsBoolean()) return;
-        var level = machine.getLevel();
+        var level = getLevel();
         var pos = getBlockPos();
         if (GTValues.RNG.nextInt(1000) == 0) {
             for (Direction side : GTUtil.DIRECTIONS) {

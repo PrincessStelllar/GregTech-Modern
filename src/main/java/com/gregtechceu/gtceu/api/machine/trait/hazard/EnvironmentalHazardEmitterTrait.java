@@ -49,7 +49,7 @@ public class EnvironmentalHazardEmitterTrait extends MachineTrait {
 
         if (getLevel() instanceof ServerLevel serverLevel) {
             IHazardParticleContainer container = GTCapabilityHelper.getHazardContainer(serverLevel,
-                    getBlockPos().relative(machine.getFrontFacing()), machine.getFrontFacing().getOpposite());
+                    getBlockPos().relative(getMachine().getFrontFacing()), getMachine().getFrontFacing().getOpposite());
             if (container != null &&
                     container.getHazardCanBeInserted(getConditionToEmit()) > getEmissionStrength()) {
                 container.addHazard(getConditionToEmit(), getEmissionStrength());

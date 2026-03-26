@@ -41,6 +41,7 @@ public class GridNodeHolder extends MachineTrait {
     }
 
     protected SerializableManagedGridNode createManagedNode() {
+        var machine = getMachine();
         var node = (SerializableManagedGridNode) new SerializableManagedGridNode((IGridConnectedBlockEntity) machine,
                 BlockEntityNodeListener.INSTANCE)
                 .setFlags(GridFlags.REQUIRE_CHANNEL)
@@ -55,13 +56,13 @@ public class GridNodeHolder extends MachineTrait {
     }
 
     protected void createMainNode() {
-        this.mainNode.create(machine.getLevel(), machine.getBlockPos());
+        this.mainNode.create(getLevel(), getBlockPos());
     }
 
     @Override
     public void onMachineLoad() {
         super.onMachineLoad();
-        if (machine.getLevel() instanceof ServerLevel serverLevel) {
+        if (getLevel() instanceof ServerLevel serverLevel) {
             serverLevel.getServer().tell(new TickTask(0, this::createMainNode));
         }
     }

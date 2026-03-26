@@ -440,7 +440,7 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
             if (batteries.isEmpty()) {
                 throw new IllegalArgumentException("Cannot rebuild Power Substation power bank with no batteries!");
             }
-            PowerStationEnergyBank newStorage = new PowerStationEnergyBank(this.machine, batteries);
+            PowerStationEnergyBank newStorage = new PowerStationEnergyBank(getMachine(), batteries);
             for (long stored : storage) {
                 newStorage.fill(stored);
             }

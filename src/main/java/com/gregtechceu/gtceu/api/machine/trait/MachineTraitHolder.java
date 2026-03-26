@@ -38,6 +38,10 @@ public final class MachineTraitHolder {
         return traits;
     }
 
+    /**
+     * Attaches a trait to this machine
+     * @param trait Trait
+     */
     public void attachTrait(MachineTrait trait) {
         var traitType = trait.getTraitType();
 
@@ -46,20 +50,21 @@ public final class MachineTraitHolder {
             throw new IllegalArgumentException("Attempted to add multiple traits of type: " + trait.getClass());
         }
 
+        trait.setMachine(machine);
         list.add(trait);
         traits.add(trait);
     }
 
     /**
-     * Registers a trait to be synced/saved.
-     * Do not register a trait to be synced and also store that trait as a syncable machine field, otherwise the trait
+     * Registers a trait with data to be saved or synced to the client..
+     * Do not register a persistent trait and also store that trait as a syncable machine field, otherwise the trait
      * data will be duplicated. Use only one sync method.
      *
      * @param traitName Unique identifier for this trait.
      * @param trait     The trait to register
      */
-    public MachineTraitHolder syncTrait(String traitName, MachineTrait trait) {
-        if (trait.machine != machine) throw new IllegalArgumentException("Trait does not belong to this machine.");
+    public MachineTraitHolder attachPersistentTrait(String traitName, MachineTrait trait) {
+        attachTrait(trait);
         if (traitsToSave.containsKey(traitName))
             throw new IllegalArgumentException("Attempted to register duplicate trait save key \"" + traitName + "\"");
         traitsToSave.put(traitName, trait);
