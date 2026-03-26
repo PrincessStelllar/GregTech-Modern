@@ -72,7 +72,7 @@ public final class MachineTraitHolder {
     }
 
     @SuppressWarnings("unchecked")
-    public @Nullable <T extends MachineTrait> T getSyncTrait(String traitName) {
+    public @Nullable <T extends MachineTrait> T getPersistentTrait(String traitName) {
         MachineTrait trait = traitsToSave.get(traitName);
         return trait == null ? null : (T) trait;
     }
@@ -118,7 +118,7 @@ public final class MachineTraitHolder {
             var compoundTag = (CompoundTag) tag;
 
             for (var key : compoundTag.getAllKeys()) {
-                var trait = traitHolder.getSyncTrait(key);
+                var trait = traitHolder.getPersistentTrait(key);
                 if (trait == null) {
                     GTCEu.LOGGER.warn("Attempted to deserialise syncable trait '{}', but no syncable trait has that ID",
                             key);

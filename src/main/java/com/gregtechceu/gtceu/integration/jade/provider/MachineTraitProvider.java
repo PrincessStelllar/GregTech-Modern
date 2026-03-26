@@ -44,8 +44,7 @@ public abstract class MachineTraitProvider<T extends MachineTrait>
     public void appendServerData(CompoundTag compoundTag, BlockAccessor blockAccessor) {
         var be = blockAccessor.getBlockEntity();
         if (be instanceof MetaMachine machine) {
-            T t = machine.getTraitHolder().getTrait(traitType);
-            if (t != null) write(compoundTag.getCompound(uid.toString()), blockAccessor, t);
+            machine.getTraitHolder().getTraitOptional(traitType).ifPresent(t -> write(compoundTag.getCompound(uid.toString()), blockAccessor, t));
         }
     }
 

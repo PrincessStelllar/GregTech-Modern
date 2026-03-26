@@ -25,6 +25,7 @@ import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.AutoOutputTrait;
 import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
 import com.gregtechceu.gtceu.api.machine.trait.MachineTraitHolder;
+import com.gregtechceu.gtceu.api.machine.trait.MachineTraitType;
 import com.gregtechceu.gtceu.api.machine.trait.feature.IFrontFacingTrait;
 import com.gregtechceu.gtceu.api.machine.trait.feature.IInteractionTrait;
 import com.gregtechceu.gtceu.api.machine.trait.feature.IRenderingTrait;
@@ -52,6 +53,8 @@ import com.lowdragmc.lowdraglib.gui.texture.IGuiTexture;
 import com.lowdragmc.lowdraglib.gui.texture.ResourceTexture;
 import com.lowdragmc.lowdraglib.utils.DummyWorld;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.experimental.Delegate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -265,6 +268,56 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
                 iter.remove();
             }
         }
+    }
+
+    //////////////////////////////////////
+    // ******* Machine Traits *******//
+    //////////////////////////////////////
+
+    public @UnmodifiableView List<MachineTrait> getAllTraits() {
+        return getTraitHolder().getAllTraits();
+    }
+
+    /**
+     * Attaches a trait to this machine
+     * @param trait Trait
+     */
+    public void attachTrait(MachineTrait trait) {
+        getTraitHolder().attachTrait(trait);
+    }
+
+    /**
+     * Registers a trait with data to be saved or synced to the client..
+     * Do not register a persistent trait and also store that trait as a syncable machine field, otherwise the trait
+     * data will be duplicated. Use only one sync method.
+     *
+     * @param traitName Unique identifier for this trait.
+     * @param trait     The trait to register
+     */
+    public void attachPersistentTrait(String traitName, MachineTrait trait) {
+        getTraitHolder().attachPersistentTrait(traitName, trait);
+    }
+
+    public @Nullable <T extends MachineTrait> T getPersistentTrait(String traitName) {
+        return getTraitHolder().getPersistentTrait(traitName);
+    }
+
+    /**
+     * Gets the first trait with the specified type.
+     */
+    public <T extends MachineTrait> @Nullable T getTrait(MachineTraitType<T> type) {
+        return getTraitHolder().getTrait(type);
+    }
+
+    public <T extends MachineTrait> Optional<T> getTraitOptional(MachineTraitType<T> type) {
+        return Optional.ofNullable(getTrait(type));
+    }
+
+    /**
+     * Get all traits with the specified type.
+     */
+    public <T extends MachineTrait> @UnmodifiableView List<T> getTraits(MachineTraitType<T> type) {
+        return getTraitHolder().getTraits(type);
     }
 
     //////////////////////////////////////
