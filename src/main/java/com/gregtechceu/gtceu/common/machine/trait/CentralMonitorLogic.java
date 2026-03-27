@@ -8,16 +8,13 @@ import com.gregtechceu.gtceu.api.misc.EnergyContainerList;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.CentralMonitorMachine;
 
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 public class CentralMonitorLogic extends RecipeLogic implements IWorkable {
 
     private static final int BASE_UPDATE_INTERVAL = 8 * 20;
 
-    public CentralMonitorLogic(IRecipeLogicMachine machine) {
-        super(machine);
-    }
-
-    public CentralMonitorMachine getMachine() {
+    public @NotNull CentralMonitorMachine getMachine() {
         return (CentralMonitorMachine) machine;
     }
 

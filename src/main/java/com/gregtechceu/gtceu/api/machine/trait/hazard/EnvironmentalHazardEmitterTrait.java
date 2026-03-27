@@ -30,9 +30,8 @@ public class EnvironmentalHazardEmitterTrait extends MachineTrait {
     @Setter
     protected MedicalCondition conditionToEmit;
 
-    public EnvironmentalHazardEmitterTrait(MetaMachine machine, MedicalCondition conditionToEmit,
+    public EnvironmentalHazardEmitterTrait(MedicalCondition conditionToEmit,
                                            float emissionStrength) {
-        super(machine);
         this.conditionToEmit = conditionToEmit;
         this.emissionStrength = emissionStrength;
     }

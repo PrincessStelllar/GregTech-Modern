@@ -38,7 +38,7 @@ public class HullMachine extends TieredPartMachine implements IMonitorComponent 
     public HullMachine(BlockEntityCreationInfo info, int tier) {
         super(info, tier);
         if (GTCEu.Mods.isAE2Loaded()) {
-            this.gridNodeHost = new GridNodeHostTrait(this);
+            this.gridNodeHost = attachTrait(new GridNodeHostTrait());
         } else {
             this.gridNodeHost = null;
         }
@@ -49,33 +49,6 @@ public class HullMachine extends TieredPartMachine implements IMonitorComponent 
         long tierVoltage = GTValues.V[getTier()];
         this.energyContainer = new NotifiableEnergyContainer(this, tierVoltage * 16L, tierVoltage, 1L, tierVoltage, 1L);
         this.energyContainer.setSideOutputCondition(s -> s == getFrontFacing());
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        if (GTCEu.Mods.isAE2Loaded() && gridNodeHost instanceof GridNodeHostTrait connectedBlockEntity &&
-                getLevel() instanceof ServerLevel level) {
-            level.getServer().tell(new TickTask(0, connectedBlockEntity::init));
-        }
-    }
-
-    @Override
-    public void onUnload() {
-        super.onUnload();
-        if (GTCEu.Mods.isAE2Loaded() && gridNodeHost instanceof GridNodeHostTrait connectedBlockEntity) {
-            connectedBlockEntity.getMainNode().destroy();
-        }
-    }
-
-    @Override
-    public void setFrontFacing(Direction facing) {
-        super.setFrontFacing(facing);
-        if (isFacingValid(facing)) {
-            if (GTCEu.Mods.isAE2Loaded() && gridNodeHost instanceof GridNodeHostTrait connectedBlockEntity) {
-                connectedBlockEntity.init();
-            }
-        }
     }
 
     //////////////////////////////////////

@@ -54,11 +54,11 @@ public class DistillationTowerMachine extends WorkableElectricMultiblockMachine
     /**
      * Construct DT Machine
      * 
-     * @param holder  BlockEntity holder
+     * @param info BE creation data
      * @param yOffset The Y difference between the controller and the first fluid output
      */
     public DistillationTowerMachine(BlockEntityCreationInfo info, int yOffset) {
-        super(info, DistillationTowerLogic::new);
+        super(info, new DistillationTowerLogic());
         this.yOffset = yOffset;
     }
 
@@ -169,10 +169,6 @@ public class DistillationTowerMachine extends WorkableElectricMultiblockMachine
         @SaveField
         @SyncToClient
         GTRecipe workingRecipe = null;
-
-        public DistillationTowerLogic(IRecipeLogicMachine machine) {
-            super(machine);
-        }
 
         @NotNull
         @Override

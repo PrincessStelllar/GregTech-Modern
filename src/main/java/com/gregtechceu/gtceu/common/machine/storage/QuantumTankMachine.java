@@ -77,9 +77,9 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
     public QuantumTankMachine(BlockEntityCreationInfo info, int tier, long maxAmount) {
         super(info, tier);
         this.maxAmount = maxAmount;
-        this.cache = createCacheFluidHandler();
+        this.cache = attachTrait(createCacheFluidHandler());
         this.lockedFluid = new CustomFluidTank(1000);
-        this.autoOutput = AutoOutputTrait.ofFluids(this, cache);
+        this.autoOutput = attachTrait(AutoOutputTrait.ofFluids(cache));
     }
 
     //////////////////////////////////////
@@ -87,7 +87,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
     //////////////////////////////////////
 
     protected FluidCache createCacheFluidHandler() {
-        return new FluidCache(this);
+        return new FluidCache();
     }
 
     @Override
@@ -237,10 +237,6 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
         }
 
         private final Predicate<FluidStack> filter = f -> !isLocked() || getLockedFluid().isFluidEqual(f);
-
-        public FluidCache(MetaMachine holder) {
-            super(holder);
-        }
 
         @Override
         public @NotNull FluidStack getFluidInTank(int tank) {

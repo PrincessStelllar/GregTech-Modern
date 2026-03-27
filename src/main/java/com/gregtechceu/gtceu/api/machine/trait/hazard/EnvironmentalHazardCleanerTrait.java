@@ -44,9 +44,8 @@ public class EnvironmentalHazardCleanerTrait extends MachineTrait {
 
     private final @Nullable BiPredicate<MedicalCondition, Float> cleaningHandler;
 
-    public EnvironmentalHazardCleanerTrait(MetaMachine machine, int cleaningRadius,
+    public EnvironmentalHazardCleanerTrait(int cleaningRadius,
                                            @Nullable BiPredicate<MedicalCondition, Float> validateCleaningOperation) {
-        super(machine);
         this.cleaningRadius = cleaningRadius;
         this.cleaningHandler = validateCleaningOperation;
     }

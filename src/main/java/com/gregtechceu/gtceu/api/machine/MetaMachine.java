@@ -275,15 +275,15 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
     //////////////////////////////////////
 
     public @UnmodifiableView List<MachineTrait> getAllTraits() {
-        return getAllTraits();
+        return getTraitHolder().getAllTraits();
     }
 
     /**
      * Attaches a trait to this machine
      * @param trait Trait
      */
-    public void attachTrait(MachineTrait trait) {
-        attachTrait(trait);
+    public <T extends MachineTrait> T attachTrait(T trait) {
+        return getTraitHolder().attachTrait(trait);
     }
 
     /**
@@ -294,19 +294,19 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
      * @param traitName Unique identifier for this trait.
      * @param trait     The trait to register
      */
-    public void attachPersistentTrait(String traitName, MachineTrait trait) {
-        attachPersistentTrait(traitName, trait);
+    public <T extends MachineTrait> T attachPersistentTrait(String traitName, T trait) {
+        return getTraitHolder().attachPersistentTrait(traitName, trait);
     }
 
     public @Nullable <T extends MachineTrait> T getPersistentTrait(String traitName) {
-        return getPersistentTrait(traitName);
+        return getTraitHolder().getPersistentTrait(traitName);
     }
 
     /**
      * Gets the first trait with the specified type.
      */
     public <T extends MachineTrait> @Nullable T getTrait(MachineTraitType<T> type) {
-        return getTrait(type);
+        return getTraitHolder().getTrait(type);
     }
 
     public <T extends MachineTrait> Optional<T> getTraitOptional(MachineTraitType<T> type) {
@@ -317,7 +317,7 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
      * Get all traits with the specified type.
      */
     public <T extends MachineTrait> @UnmodifiableView List<T> getTraits(MachineTraitType<T> type) {
-        return getTraits(type);
+        return getTraitHolder().getTraits(type);
     }
 
     //////////////////////////////////////

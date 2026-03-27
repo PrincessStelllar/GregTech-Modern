@@ -74,19 +74,19 @@ public abstract class WorkableMultiblockMachine extends MultiblockControllerMach
     protected VoidingMode voidingMode = VoidingMode.VOID_NONE;
 
     public WorkableMultiblockMachine(BlockEntityCreationInfo info,
-                                     Function<WorkableMultiblockMachine, RecipeLogic> recipeLogicSupplier) {
+                                     RecipeLogic recipeLogic) {
         super(info);
         this.recipeTypes = getDefinition().getRecipeTypes();
         this.activeRecipeType = 0;
-        this.cleanroomReceiver = new CleanroomReceiverTrait(this);
-        this.recipeLogic = recipeLogicSupplier.apply(this);
+        this.cleanroomReceiver = attachTrait(new CleanroomReceiverTrait());
+        this.recipeLogic = attachTrait(recipeLogic);
         this.capabilitiesProxy = new EnumMap<>(IO.class);
         this.capabilitiesFlat = new EnumMap<>(IO.class);
         this.traitSubscriptions = new ArrayList<>();
     }
 
     public WorkableMultiblockMachine(BlockEntityCreationInfo info) {
-        this(info, RecipeLogic::new);
+        this(info, new RecipeLogic());
     }
 
     public void setMuffled(boolean muffled) {

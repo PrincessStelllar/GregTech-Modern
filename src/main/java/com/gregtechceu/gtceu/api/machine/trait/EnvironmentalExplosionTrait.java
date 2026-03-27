@@ -28,17 +28,16 @@ public class EnvironmentalExplosionTrait extends MachineTrait {
     @Setter
     private BooleanSupplier explosionPredicate;
 
-    public EnvironmentalExplosionTrait(MetaMachine machine, float explosionPower, float fireChance,
+    public EnvironmentalExplosionTrait(float explosionPower, float fireChance,
                                        BooleanSupplier explosionPredicate) {
-        super(machine);
         enableEnvironmentalExplosions = true;
         this.explosionPredicate = explosionPredicate;
         this.explosionPower = explosionPower;
         this.fireChance = fireChance;
     }
 
-    public EnvironmentalExplosionTrait(MetaMachine machine, float explosionPower, float fireChance) {
-        this(machine, explosionPower, fireChance, () -> true);
+    public EnvironmentalExplosionTrait(float explosionPower, float fireChance) {
+        this(explosionPower, fireChance, () -> true);
     }
 
     @Override

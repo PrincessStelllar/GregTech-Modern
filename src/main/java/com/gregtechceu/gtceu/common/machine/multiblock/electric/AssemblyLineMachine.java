@@ -7,6 +7,7 @@ import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.IRecipeHandler;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
+import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
@@ -45,7 +46,7 @@ public class AssemblyLineMachine extends WorkableElectricMultiblockMachine {
     protected boolean allowCircuitSlots;
 
     public AssemblyLineMachine(BlockEntityCreationInfo info, boolean allowCircuitSlots) {
-        super(info, machine -> new AsslineRecipeLogic((AssemblyLineMachine) machine));
+        super(info, new AsslineRecipeLogic());
         this.allowCircuitSlots = allowCircuitSlots;
     }
 
@@ -258,17 +259,21 @@ public class AssemblyLineMachine extends WorkableElectricMultiblockMachine {
 
     private static class AsslineRecipeLogic extends RecipeLogic {
 
-        private final AssemblyLineMachine machine;
+        @Override
+        public AssemblyLineMachine getMachine() {
+            return (AssemblyLineMachine)super.getMachine();
+        }
 
-        public AsslineRecipeLogic(AssemblyLineMachine machine) {
-            super(machine);
-            this.machine = machine;
+        @Override
+        public void setMachine(MetaMachine machine) {
+            if (!(machine instanceof AssemblyLineMachine)) throw new IllegalArgumentException("Assline logic attached to machine other than assline");
+            super.setMachine(machine);
         }
 
         @Override
         protected ActionResult handleRecipeIO(GTRecipe recipe, IO io) {
             if (io.equals(IO.IN)) {
-                return machine.consumeAll(recipe, false, this.getChanceCaches());
+                return getMachine().consumeAll(recipe, false, this.getChanceCaches());
             }
             return RecipeHelper.handleRecipeIO(machine, recipe, io, this.chanceCaches);
         }
@@ -276,7 +281,7 @@ public class AssemblyLineMachine extends WorkableElectricMultiblockMachine {
         @Override
         protected ActionResult handleTickRecipeIO(GTRecipe recipe, IO io) {
             if (io.equals(IO.IN)) {
-                return machine.consumeAll(recipe, true, this.getChanceCaches());
+                return getMachine().consumeAll(recipe, true, this.getChanceCaches());
             }
             return RecipeHelper.handleTickRecipeIO(machine, recipe, io, this.chanceCaches);
         }
@@ -289,12 +294,12 @@ public class AssemblyLineMachine extends WorkableElectricMultiblockMachine {
 
             var config = ConfigHolder.INSTANCE.machines;
             if (!config.orderedAssemblyLineItems && !config.orderedAssemblyLineFluids) return ActionResult.SUCCESS;
-            if (!machine.checkItemInputs(recipe, false)) return ActionResult.FAIL_NO_REASON;
-            if (!machine.checkItemInputs(recipe, true)) return ActionResult.FAIL_NO_REASON;
+            if (!getMachine().checkItemInputs(recipe, false)) return ActionResult.FAIL_NO_REASON;
+            if (!getMachine().checkItemInputs(recipe, true)) return ActionResult.FAIL_NO_REASON;
 
             if (!config.orderedAssemblyLineFluids) return ActionResult.SUCCESS;
-            if (!machine.checkFluidInputs(recipe, false)) return ActionResult.FAIL_NO_REASON;
-            if (!machine.checkFluidInputs(recipe, true)) return ActionResult.FAIL_NO_REASON;
+            if (!getMachine().checkFluidInputs(recipe, false)) return ActionResult.FAIL_NO_REASON;
+            if (!getMachine().checkFluidInputs(recipe, true)) return ActionResult.FAIL_NO_REASON;
             return ActionResult.SUCCESS;
         }
     }

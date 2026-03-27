@@ -34,8 +34,7 @@ public class ItemHandlerProxyTrait extends MachineTrait implements IItemHandlerM
     @Nullable
     public IItemHandlerModifiable proxy;
 
-    public ItemHandlerProxyTrait(MetaMachine machine, IO capabilityIO) {
-        super(machine);
+    public ItemHandlerProxyTrait(IO capabilityIO) {
         this.capabilityIO = capabilityIO;
     }
 

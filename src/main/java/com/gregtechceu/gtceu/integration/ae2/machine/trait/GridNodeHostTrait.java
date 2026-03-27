@@ -11,6 +11,9 @@ import appeng.api.networking.IManagedGridNode;
 import appeng.api.util.AECableType;
 import appeng.me.helpers.BlockEntityNodeListener;
 import appeng.me.helpers.IGridConnectedBlockEntity;
+import net.minecraft.server.TickTask;
+import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.Nullable;
 
 public class GridNodeHostTrait extends MachineTrait implements IGridConnectedBlockEntity {
 
@@ -21,21 +24,33 @@ public class GridNodeHostTrait extends MachineTrait implements IGridConnectedBlo
         return TYPE;
     }
 
-    private final IManagedGridNode proxy;
+    private @Nullable IManagedGridNode proxy;
 
-    public GridNodeHostTrait(MetaMachine machine) {
-        super(machine);
+    public GridNodeHostTrait() {}
+
+    @Override
+    public void onMachineLoad() {
         this.proxy = GridHelper.createManagedNode(this, BlockEntityNodeListener.INSTANCE)
                 .setInWorldNode(true)
-                .setVisualRepresentation(machine.getDefinition().getItem());
+                .setVisualRepresentation(getMachine().getDefinition().getItem());
+
+        if (getLevel() instanceof ServerLevel serverLevel) {
+            serverLevel.getServer().tell(new TickTask(0, this::init));
+        }
+    }
+
+    @Override
+    public void onMachineUnload() {
+        getMainNode().destroy();
     }
 
     public void init() {
-        this.proxy.create(getLevel(), getBlockPos());
+        if (this.proxy != null) this.proxy.create(getLevel(), getBlockPos());
     }
 
     @Override
     public IManagedGridNode getMainNode() {
+        if (proxy == null) throw new IllegalStateException("Tried to get ae2 grid node before BE fully loaded");
         return proxy;
     }
 

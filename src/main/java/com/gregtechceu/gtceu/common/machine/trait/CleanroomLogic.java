@@ -36,10 +36,6 @@ public class CleanroomLogic extends RecipeLogic implements IWorkable {
     @SaveField
     private boolean isActiveAndNeedsUpdate;
 
-    public CleanroomLogic(CleanroomMachine machine) {
-        super(machine);
-    }
-
     @Override
     public CleanroomMachine getMachine() {
         return (CleanroomMachine) machine;

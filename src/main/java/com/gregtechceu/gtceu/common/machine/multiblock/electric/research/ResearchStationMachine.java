@@ -40,7 +40,7 @@ public class ResearchStationMachine extends WorkableElectricMultiblockMachine
     private ObjectHolderMachine objectHolder;
 
     public ResearchStationMachine(BlockEntityCreationInfo info) {
-        super(info, (m) -> new ResearchStationRecipeLogic((ResearchStationMachine) m));
+        super(info, new ResearchStationRecipeLogic());
     }
 
     @Override
@@ -114,10 +114,6 @@ public class ResearchStationMachine extends WorkableElectricMultiblockMachine
     }
 
     public static class ResearchStationRecipeLogic extends RecipeLogic {
-
-        public ResearchStationRecipeLogic(ResearchStationMachine metaTileEntity) {
-            super(metaTileEntity);
-        }
 
         @NotNull
         @Override

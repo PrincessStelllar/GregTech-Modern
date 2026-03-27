@@ -59,7 +59,7 @@ public class LargeBoilerMachine extends WorkableMultiblockMachine implements IDi
     private int steamGenerated;
 
     public LargeBoilerMachine(BlockEntityCreationInfo info, int maxTemperature, int heatSpeed) {
-        super(info, LargeBoilerRecipeLogic::new);
+        super(info, new LargeBoilerRecipeLogic());
         this.maxTemperature = maxTemperature;
         this.heatSpeed = heatSpeed;
         this.throttle = 100;
@@ -245,8 +245,7 @@ public class LargeBoilerMachine extends WorkableMultiblockMachine implements IDi
         @Getter
         int currentThrottle;
 
-        public LargeBoilerRecipeLogic(IRecipeLogicMachine machine) {
-            super(machine);
+        public LargeBoilerRecipeLogic() {
             currentThrottle = 100;
         }
 

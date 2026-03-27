@@ -21,8 +21,8 @@ public class CleanroomProviderTrait extends MachineTrait {
     @Setter
     private boolean isActive;
 
-    public CleanroomProviderTrait(MetaMachine machine, Set<CleanroomType> providedTypes) {
-        super(machine);
+    public CleanroomProviderTrait(Set<CleanroomType> providedTypes) {
+        super();
         this.providedTypes = new ObjectOpenHashSet<>(providedTypes);
         this.isActive = false;
     }
@@ -32,7 +32,7 @@ public class CleanroomProviderTrait extends MachineTrait {
         return TYPE;
     }
 
-    public CleanroomProviderTrait(MetaMachine machine) {
-        this(machine, Set.of(CleanroomType.CLEANROOM));
+    public CleanroomProviderTrait() {
+        this(Set.of(CleanroomType.CLEANROOM));
     }
 }

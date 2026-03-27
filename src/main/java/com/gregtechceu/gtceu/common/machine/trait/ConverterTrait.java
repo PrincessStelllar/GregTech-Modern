@@ -43,7 +43,7 @@ public class ConverterTrait extends NotifiableEnergyContainer {
         this.voltage = GTValues.V[machine.getTier()];
         setSideInputCondition(side -> !this.feToEu && side != this.getMachine().getFrontFacing());
         setSideOutputCondition(side -> this.feToEu && side == this.getMachine().getFrontFacing());
-        this.feContainer = new FEContainer(machine);
+        this.feContainer = machine.attachTrait(new FEContainer());
     }
 
     ////////////////////////////////
@@ -94,10 +94,6 @@ public class ConverterTrait extends NotifiableEnergyContainer {
         @Override
         public MachineTraitType<FEContainer> getTraitType() {
             return TYPE;
-        }
-
-        public FEContainer(MetaMachine machine) {
-            super(machine);
         }
 
         @Override

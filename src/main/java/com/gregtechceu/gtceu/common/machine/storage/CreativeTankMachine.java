@@ -43,7 +43,7 @@ public class CreativeTankMachine extends QuantumTankMachine {
     }
 
     protected FluidCache createCacheFluidHandler() {
-        return new InfiniteCache(this);
+        return attachTrait(new InfiniteCache());
     }
 
     @Override
@@ -162,10 +162,6 @@ public class CreativeTankMachine extends QuantumTankMachine {
     }
 
     private class InfiniteCache extends FluidCache {
-
-        public InfiniteCache(MetaMachine holder) {
-            super(holder);
-        }
 
         @Override
         public @NotNull FluidStack getFluidInTank(int tank) {

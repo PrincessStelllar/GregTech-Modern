@@ -42,8 +42,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.*;
@@ -76,8 +76,8 @@ public class RecipeLogic extends MachineTrait implements IWorkable, IFancyToolti
 
     public static final EnumProperty<RecipeLogic.Status> STATUS_PROPERTY = GTMachineModelProperties.RECIPE_LOGIC_STATUS;
 
-    public final IRecipeLogicMachine machine;
-    public List<GTRecipe> lastFailedMatches;
+    public @UnknownNullability IRecipeLogicMachine machine;
+    public @Nullable List<GTRecipe> lastFailedMatches;
 
     @Getter
     @SaveField
@@ -144,12 +144,15 @@ public class RecipeLogic extends MachineTrait implements IWorkable, IFancyToolti
     @Getter
     @SaveField(nbtKey = "chance_cache")
     protected final ChanceCacheMap chanceCaches = makeChanceCaches();
-    protected TickableSubscription subscription;
-    protected Object workingSound;
+    protected @Nullable TickableSubscription subscription;
+    protected @Nullable Object workingSound;
 
-    public RecipeLogic(IRecipeLogicMachine machine) {
-        super(machine.self());
-        this.machine = machine;
+    public RecipeLogic() {}
+
+    public void setMachine(MetaMachine machine) {
+        if (!(machine instanceof IRecipeLogicMachine rlMachine)) throw new IllegalArgumentException("Attempted to attach RecipeLogic to a machine not implementing IRecipeLogicMachine");
+        this.machine = rlMachine;
+        super.setMachine(machine);
     }
 
     @SuppressWarnings("unused")
@@ -341,7 +344,7 @@ public class RecipeLogic extends MachineTrait implements IWorkable, IFancyToolti
         }
     }
 
-    public @NotNull Iterator<GTRecipe> searchRecipe() {
+    public Iterator<GTRecipe> searchRecipe() {
         return machine.getRecipeType().searchRecipe(machine, r -> true);
     }
 
@@ -364,10 +367,9 @@ public class RecipeLogic extends MachineTrait implements IWorkable, IFancyToolti
         recipeDirty = false;
     }
 
-    protected void handleSearchingRecipes(@NotNull Iterator<GTRecipe> matches) {
+    protected void handleSearchingRecipes(Iterator<GTRecipe> matches) {
         while (matches.hasNext()) {
             GTRecipe match = matches.next();
-            if (match == null) continue;
 
             // If a new recipe was found, cache found recipe.
             if (checkMatchedRecipeAvailable(match))
@@ -648,8 +650,8 @@ public class RecipeLogic extends MachineTrait implements IWorkable, IFancyToolti
         ValueTransformers.registerTransformer(ChanceCacheMap.class, new ValueTransformer<ChanceCacheMap>() {
 
             @Override
-            public @NotNull Tag serializeNBT(@NotNull ChanceCacheMap value,
-                                             @NotNull TransformerContext<ChanceCacheMap> context) {
+            public Tag serializeNBT(ChanceCacheMap value,
+                                             TransformerContext<ChanceCacheMap> context) {
                 CompoundTag chanceCache = new CompoundTag();
                 if (context.currentValue() == null) return chanceCache;
 
@@ -669,8 +671,8 @@ public class RecipeLogic extends MachineTrait implements IWorkable, IFancyToolti
             }
 
             @Override
-            public @Nullable ChanceCacheMap deserializeNBT(@NotNull Tag tag,
-                                                           @NotNull TransformerContext<ChanceCacheMap> context) {
+            public @Nullable ChanceCacheMap deserializeNBT(Tag tag,
+                                                           TransformerContext<ChanceCacheMap> context) {
                 CompoundTag chanceCache = ValueTransformer.assertTagType(CompoundTag.class, tag, context);
                 if (context.currentValue() != null) {
                     for (String key : chanceCache.getAllKeys()) {

@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -33,12 +34,8 @@ public class BedrockOreMinerLogic extends RecipeLogic {
     @Nullable
     private List<WeightedMaterial> veinMaterials;
 
-    public BedrockOreMinerLogic(BedrockOreMinerMachine machine) {
-        super(machine);
-    }
-
     @Override
-    public BedrockOreMinerMachine getMachine() {
+    public @NotNull BedrockOreMinerMachine getMachine() {
         return (BedrockOreMinerMachine) super.getMachine();
     }
 

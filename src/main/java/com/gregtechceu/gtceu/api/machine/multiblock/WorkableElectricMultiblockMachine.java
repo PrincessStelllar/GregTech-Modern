@@ -53,8 +53,8 @@ public class WorkableElectricMultiblockMachine extends WorkableMultiblockMachine
     protected boolean batchEnabled;
 
     public WorkableElectricMultiblockMachine(BlockEntityCreationInfo info,
-                                             Function<WorkableMultiblockMachine, RecipeLogic> recipeLogicSupplier) {
-        super(info, recipeLogicSupplier);
+                                             RecipeLogic logic) {
+        super(info, logic);
     }
 
     public WorkableElectricMultiblockMachine(BlockEntityCreationInfo info) {

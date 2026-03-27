@@ -86,13 +86,8 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
     protected List<ISubscription> fluidSubs = new ArrayList<>();
     private final boolean useDefaultToolHandlers;
 
-    public AutoOutputTrait(MetaMachine machine, List<IItemHandler> itemHandlers, List<IFluidHandler> fluidHandlers,
+    public AutoOutputTrait(List<IItemHandler> itemHandlers, List<IFluidHandler> fluidHandlers,
                            boolean useDefaultToolHandlers) {
-        super(machine);
-
-        this.itemOutputDirection = machine.hasFrontFacing() ? machine.getFrontFacing().getOpposite() : Direction.UP;
-        this.fluidOutputDirection = itemOutputDirection;
-
         this.itemHandlers = itemHandlers.stream().filter(h -> {
             if (h.getSlots() == 0) return false;
             if (h instanceof ICapabilityTrait cap) return cap.canCapOutput();
@@ -106,8 +101,8 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
         this.useDefaultToolHandlers = useDefaultToolHandlers;
     }
 
-    public AutoOutputTrait(MetaMachine machine, List<IItemHandler> itemHandlers, List<IFluidHandler> fluidHandlers) {
-        this(machine, itemHandlers, fluidHandlers, true);
+    public AutoOutputTrait(List<IItemHandler> itemHandlers, List<IFluidHandler> fluidHandlers) {
+        this(itemHandlers, fluidHandlers, true);
     }
 
     @Override
@@ -115,17 +110,21 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
         return TYPE;
     }
 
-    public static AutoOutputTrait ofItems(MetaMachine machine, IItemHandler... itemHandlers) {
-        return new AutoOutputTrait(machine, Arrays.asList(itemHandlers), List.of());
+    public static AutoOutputTrait ofItems(IItemHandler... itemHandlers) {
+        return new AutoOutputTrait(Arrays.asList(itemHandlers), List.of());
     }
 
-    public static AutoOutputTrait ofFluids(MetaMachine machine, IFluidHandler... fluidHandlers) {
-        return new AutoOutputTrait(machine, List.of(), Arrays.asList(fluidHandlers));
+    public static AutoOutputTrait ofFluids(IFluidHandler... fluidHandlers) {
+        return new AutoOutputTrait(List.of(), Arrays.asList(fluidHandlers));
     }
 
     @Override
     public void onMachineLoad() {
         super.onMachineLoad();
+
+        this.itemOutputDirection = getMachine().hasFrontFacing() ? getMachine().getFrontFacing().getOpposite() : Direction.UP;
+        this.fluidOutputDirection = itemOutputDirection;
+
         if (getLevel() instanceof ServerLevel serverLevel) {
             serverLevel.getServer().tell(new TickTask(0, this::updateFluidOutputSubscription));
             serverLevel.getServer().tell(new TickTask(0, this::updateItemOutputSubscription));

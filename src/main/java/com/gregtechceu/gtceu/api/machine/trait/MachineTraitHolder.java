@@ -42,7 +42,7 @@ public final class MachineTraitHolder {
      * Attaches a trait to this machine
      * @param trait Trait
      */
-    public void attachTrait(MachineTrait trait) {
+    public <T extends MachineTrait> T attachTrait(T trait) {
         var traitType = trait.getTraitType();
 
         var list = traitsByType.computeIfAbsent(traitType, $ -> new ObjectArrayList<>(1));
@@ -53,6 +53,8 @@ public final class MachineTraitHolder {
         trait.setMachine(machine);
         list.add(trait);
         traits.add(trait);
+
+        return trait;
     }
 
     /**
@@ -63,12 +65,12 @@ public final class MachineTraitHolder {
      * @param traitName Unique identifier for this trait.
      * @param trait     The trait to register
      */
-    public MachineTraitHolder attachPersistentTrait(String traitName, MachineTrait trait) {
+    public <T extends MachineTrait> T attachPersistentTrait(String traitName, T trait) {
         attachTrait(trait);
         if (traitsToSave.containsKey(traitName))
             throw new IllegalArgumentException("Attempted to register duplicate trait save key \"" + traitName + "\"");
         traitsToSave.put(traitName, trait);
-        return this;
+        return trait;
     }
 
     @SuppressWarnings("unchecked")

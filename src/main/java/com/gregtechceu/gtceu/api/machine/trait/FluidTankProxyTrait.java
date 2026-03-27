@@ -30,8 +30,7 @@ public class FluidTankProxyTrait extends MachineTrait implements IFluidHandlerMo
     @Getter
     public @Nullable IFluidHandlerModifiable proxy;
 
-    public FluidTankProxyTrait(MetaMachine machine, IO capabilityIO) {
-        super(machine);
+    public FluidTankProxyTrait(IO capabilityIO) {
         this.capabilityIO = capabilityIO;
     }
 

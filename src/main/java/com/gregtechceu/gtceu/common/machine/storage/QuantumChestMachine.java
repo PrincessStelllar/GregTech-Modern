@@ -87,9 +87,9 @@ public class QuantumChestMachine extends TieredMachine implements IControllable,
     public QuantumChestMachine(BlockEntityCreationInfo info, int tier, long maxAmount) {
         super(info, tier);
         this.maxAmount = maxAmount;
-        this.cache = createCacheItemHandler();
+        this.cache = attachTrait(createCacheItemHandler());
         this.lockedItem = new CustomItemStackHandler();
-        this.autoOutput = AutoOutputTrait.ofItems(this, cache);
+        this.autoOutput = attachTrait(AutoOutputTrait.ofItems(cache));
         lockedItem.setOnContentsChanged(() -> syncDataHolder.markClientSyncFieldDirty("lockedItem"));
     }
 
@@ -98,7 +98,7 @@ public class QuantumChestMachine extends TieredMachine implements IControllable,
     //////////////////////////////////////
 
     protected ItemCache createCacheItemHandler() {
-        return new ItemCache(this);
+        return new ItemCache();
     }
 
     protected void onItemChanged() {
@@ -324,10 +324,6 @@ public class QuantumChestMachine extends TieredMachine implements IControllable,
 
         private final Predicate<ItemStack> filter = i -> !isLocked() ||
                 GTUtil.isSameItemSameTags(i, getLockedItem());
-
-        public ItemCache(MetaMachine holder) {
-            super(holder);
-        }
 
         @Override
         public void setStackInSlot(int index, ItemStack stack) {

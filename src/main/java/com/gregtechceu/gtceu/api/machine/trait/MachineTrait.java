@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.api.sync_system.ISyncManaged;
 import com.gregtechceu.gtceu.api.sync_system.SyncDataHolder;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
 
-import lombok.NonNull;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,7 +33,9 @@ public abstract class MachineTrait implements ISyncManaged {
 
     private @Nullable MetaMachine machine;
     @Setter
-    protected Predicate<@Nullable Direction> capabilityValidator;
+    protected Predicate<@Nullable Direction> capabilityValidator = side -> true;
+
+    public MachineTrait() {}
 
     public MachineTrait(MetaMachine machine) {
         this.machine = machine;

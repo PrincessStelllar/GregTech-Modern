@@ -67,7 +67,7 @@ public abstract class WorkableTieredMachine extends TieredEnergyMachine implemen
         this.capabilitiesProxy = new EnumMap<>(IO.class);
         this.capabilitiesFlat = new EnumMap<>(IO.class);
         this.traitSubscriptions = new ArrayList<>();
-        this.cleanroomReceiver = new CleanroomReceiverTrait(this);
+        this.cleanroomReceiver = attachTrait(new CleanroomReceiverTrait());
         this.recipeLogic = recipeLogicSupplier.apply(this);
         this.importItems = new NotifiableItemStackHandler(this, importSlots, IO.IN, IO.BOTH);
         this.exportItems = new NotifiableItemStackHandler(this, exportSlots, IO.OUT);
@@ -87,8 +87,8 @@ public abstract class WorkableTieredMachine extends TieredEnergyMachine implemen
         this.capabilitiesProxy = new EnumMap<>(IO.class);
         this.capabilitiesFlat = new EnumMap<>(IO.class);
         this.traitSubscriptions = new ArrayList<>();
-        this.cleanroomReceiver = new CleanroomReceiverTrait(this);
-        this.recipeLogic = new RecipeLogic(this);
+        this.cleanroomReceiver = attachTrait(new CleanroomReceiverTrait());
+        this.recipeLogic = attachTrait(new RecipeLogic());
         this.importItems = new NotifiableItemStackHandler(this, getRecipeType().getMaxInputs(ItemRecipeCapability.CAP),
                 IO.IN);
         this.exportItems = new NotifiableItemStackHandler(this, getRecipeType().getMaxOutputs(ItemRecipeCapability.CAP),

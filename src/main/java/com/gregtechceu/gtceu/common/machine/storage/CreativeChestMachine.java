@@ -45,7 +45,7 @@ public class CreativeChestMachine extends QuantumChestMachine {
 
     @Override
     protected ItemCache createCacheItemHandler() {
-        return new InfiniteCache(this);
+        return new InfiniteCache();
     }
 
     private InteractionResult updateStored(ItemStack item) {
@@ -131,10 +131,6 @@ public class CreativeChestMachine extends QuantumChestMachine {
     }
 
     private class InfiniteCache extends ItemCache {
-
-        public InfiniteCache(MetaMachine holder) {
-            super(holder);
-        }
 
         @Override
         public @NotNull ItemStack getStackInSlot(int slot) {

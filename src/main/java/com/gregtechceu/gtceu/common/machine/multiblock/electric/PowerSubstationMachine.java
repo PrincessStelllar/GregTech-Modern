@@ -10,7 +10,6 @@ import com.gregtechceu.gtceu.api.gui.fancy.FancyMachineUIWidget;
 import com.gregtechceu.gtceu.api.gui.fancy.IFancyUIProvider;
 import com.gregtechceu.gtceu.api.gui.fancy.TooltipsPanel;
 import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
-import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMaintenanceMachine;
@@ -41,7 +40,7 @@ import com.google.common.annotations.VisibleForTesting;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.time.Duration;
@@ -68,13 +67,13 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
 
     private static final BigInteger BIG_INTEGER_MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
 
-    private IMaintenanceMachine maintenance;
+    private @Nullable IMaintenanceMachine maintenance;
 
     @SaveField
     private PowerStationEnergyBank energyBank;
 
-    private EnergyContainerList inputHatches;
-    private EnergyContainerList outputHatches;
+    private @Nullable EnergyContainerList inputHatches;
+    private @Nullable EnergyContainerList outputHatches;
     private long passiveDrain;
 
     // Stats tracked for UI display
@@ -90,7 +89,7 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
     public PowerSubstationMachine(BlockEntityCreationInfo info) {
         super(info);
         this.tickSubscription = new ConditionalSubscriptionHandler(this, this::transferEnergyTick, this::isFormed);
-        this.energyBank = new PowerStationEnergyBank(this, List.of());
+        this.energyBank = attachTrait(new PowerStationEnergyBank(List.of()));
     }
 
     @Override
@@ -142,11 +141,7 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
             onStructureInvalid();
             return;
         }
-        if (this.energyBank == null) {
-            this.energyBank = new PowerStationEnergyBank(this, batteries);
-        } else {
-            this.energyBank = energyBank.rebuild(batteries);
-        }
+        energyBank.rebuild(batteries);
         this.passiveDrain = this.energyBank.getPassiveDrainPerTick();
     }
 
@@ -393,14 +388,8 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
         private BigInteger capacity;
         private int index;
 
-        public PowerStationEnergyBank(MetaMachine machine, List<IBatteryData> batteries) {
-            super(machine);
-            storage = new long[batteries.size()];
-            maximums = new long[batteries.size()];
-            for (int i = 0; i < batteries.size(); i++) {
-                maximums[i] = batteries.get(i).getCapacity();
-            }
-            capacity = summarize(maximums);
+        public PowerStationEnergyBank(List<IBatteryData> batteries) {
+            updateBatteries(batteries);
         }
 
         public void deserializeNBT(CompoundTag storageTag) {
@@ -431,20 +420,29 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
             return compound;
         }
 
+        public void updateBatteries(List<IBatteryData> batteries) {
+            storage = new long[batteries.size()];
+            maximums = new long[batteries.size()];
+            for (int i = 0; i < batteries.size(); i++) {
+                maximums[i] = batteries.get(i).getCapacity();
+            }
+            capacity = summarize(maximums);
+        }
+
         /**
          * Rebuild the power storage with a new list of batteries.
          * Will use existing stored power and try to map it onto new batteries.
          * If there was more power before the rebuild operation, it will be lost.
          */
-        public PowerStationEnergyBank rebuild(@NotNull List<IBatteryData> batteries) {
+        public void rebuild(List<IBatteryData> batteries) {
             if (batteries.isEmpty()) {
                 throw new IllegalArgumentException("Cannot rebuild Power Substation power bank with no batteries!");
             }
-            PowerStationEnergyBank newStorage = new PowerStationEnergyBank(getMachine(), batteries);
-            for (long stored : storage) {
-                newStorage.fill(stored);
+
+            var oldStorage = storage.clone();
+            for (long stored : oldStorage) {
+                fill(stored);
             }
-            return newStorage;
         }
 
         /** @return Amount filled into storage */

@@ -131,7 +131,6 @@ public class MinerLogic extends RecipeLogic implements IRecipeCapabilityHolder {
      * @param maximumRadius the maximum radius (square shaped) the miner can mine in
      */
     public MinerLogic(@NotNull IRecipeLogicMachine machine, int fortune, int speed, int maximumRadius) {
-        super(machine);
         this.miner = (IMiner) machine;
         this.fortune = fortune;
         this.speed = speed;
